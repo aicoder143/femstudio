@@ -41,6 +41,8 @@ function getBrief(){
  const value=id=>$(id).value.trim();
  const truth=value('truth');
  const hasModel=Boolean(images.model);
+ const wardrobeSelected=Boolean(value('dress')||value('dressColor')||value('dressDetails'));
+ const hairStylingSelected=Boolean(value('hairStyle')||value('hairParting')||value('hairDetails'));
  return {
   schemaVersion:'2.0',
   task:'Create one Femegha ecommerce image using the attached source photo(s) and this structured brief.',
@@ -49,8 +51,8 @@ function getBrief(){
   sourceImages:{product:{fileName:images.product?.name||null,role:'Ground truth for the product; do not change visible product attributes.'},model:{fileName:images.model?.name||null,role:hasModel?'Preserve model identity and likeness.':'Optional; create a suitable editorial model if needed.'}},
   productTruth:{name:value('productTitle')||'Unnamed Femegha product',sku:value('sku')||null,immutableAttributes:truth||null,missingInformationRule:'Do not invent unknown product properties. Ask for details or keep them neutral.'},
   model:{position:value('anchor'),sizePercentOfCanvasHeight:Number(value('scale'))},
-  wardrobe:{selection:value('dress'),color:value('dressColor'),details:value('dressDetails')||null,rule:'If set to as-reference, preserve clothing from the model photo. Changes apply only to AI generation, not the browser-composed PNG.'},
-  hairStyling:{selection:value('hairStyle'),parting:value('hairParting'),details:value('hairDetails')||null,rule:'Only use styling achievable with the real product. Product color, length, texture, hairline, density and construction remain unchanged unless the product truth explicitly permits a change.'},
+  ...(wardrobeSelected?{wardrobe:{selection:value('dress')||null,color:value('dressColor')||null,details:value('dressDetails')||null,rule:'If set to as-reference, preserve clothing from the model photo. Changes apply only to AI generation, not the browser-composed PNG.'}}:{}),
+  ...(hairStylingSelected?{hairStyling:{selection:value('hairStyle')||null,parting:value('hairParting')||null,details:value('hairDetails')||null,rule:'Only use styling achievable with the real product. Product color, length, texture, hairline, density and construction remain unchanged unless the product truth explicitly permits a change.'}}:{}),
   artDirection:{background:value('background'),mood:value('mood'),additionalInstructions:value('notes')||null,brandStyle:'Warm ivory, blush and soft lilac; restrained violet accent; realistic premium fashion editorial.'},
   generationRules:{mustPreserve:['Product identity and all specified immutable attributes','Natural hair detail and believable anatomy','Text and UI safe areas'],mustAvoid:['Text, logos, watermarks, prices, buttons or badges baked into the image','Invented product features','Distorted hands, face or hair','Fabricated reviews or claims'],specialHeroTreatment:p.layered?'Create separate backdrop and transparent model cutout with natural hair edges, plus a composite preview. Model silhouette may rise into the header region but must not obscure navigation controls.':null},
   review:{status:'manual review required',checks:['Compare image against real product','Check dress and hair styling match selections','Check crop and safe area','Confirm rights and consent before publishing']},
