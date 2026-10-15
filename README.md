@@ -16,6 +16,8 @@ The JSON brief uses schema version 2.0 and separates output size, placement, sou
 
 Dress and hair styling are optional. If you leave both sets of controls at “No preference” and leave their detail fields empty, the JSON omits `wardrobe` and `hairStyling` entirely.
 
+The dress menu includes Indian attire such as half saree, saree, silk saree, ghagra choli, lehenga choli, salwar kameez, Anarkali, and kurta sets, plus fashion and studio options. The JSON records both a stable option code and the readable outfit name.
+
 The JSON contains a fixed premium-finish rule: preserve the actual product's sheen and texture. It excludes added gloss, wet-look shine, plastic-looking hair, blown highlights, and heavy beauty filtering. Product fidelity takes priority over creative notes.
 
 ## Optional generation endpoint
