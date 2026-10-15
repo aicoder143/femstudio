@@ -20,6 +20,10 @@ The dress menu includes Indian attire such as half saree, saree, silk saree, gha
 
 The JSON contains a fixed premium-finish rule: preserve the actual product's sheen and texture. It excludes added gloss, wet-look shine, plastic-looking hair, blown highlights, and heavy beauty filtering. Product fidelity takes priority over creative notes.
 
+## ART shortcodes
+
+The studio recommends a shortcode from the user's ART image-creation and product-image guides based on the selected placement. The command updates with product name, source-photo references, aspect ratio, safe area, outfit and hair choices, and the premium-finish exclusions. Use **Copy ART shortcode** below **Copy AI JSON**. These `/ART` commands are custom aliases, not built-in ChatGPT or Gemini commands. In a new chat, attach the relevant ART guide and source photos before pasting a shortcode. The JSON remains the complete brief; the shortcode is a fast starting point. Product gallery thumbnails should normally be cropped from approved gallery images, and before/after images require authentic, consented source photos.
+
 ## Optional generation endpoint
 
 Enter the URL of your **own HTTPS proxy** in the app. It receives a JSON request containing the brief plus `referenceImageDataUrls.product` and optional `referenceImageDataUrls.model`. It must return JSON like `{"imageDataUrl":"data:image/png;base64,..."}`. Keep provider credentials on the server; never embed an API key in this static app or its repository. The endpoint URL is stored in this browser's localStorage.

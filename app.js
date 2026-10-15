@@ -59,8 +59,51 @@ function getBrief(){
   usage:'Attach the original product photo and optional model photo alongside this JSON when using ChatGPT, Gemini, or another AI image platform.'
  };
 }
+const artRecipes={
+ 'hero-desktop':['BRAND-HEADER','Wide brand header','left 40%','Create separate backdrop and transparent model cutout; preserve pop-out overlap without covering navigation.'],
+ 'hero-mobile':['AD-STORY','Tall mobile campaign','upper third','Keep the model and headline safe on a narrow screen.'],
+ 'hairstyle':['MODEL-LOOKBOOK','Consistent hairstyle collection','none','Show the selected hairstyle clearly with a consistent portrait crop.'],
+ 'premium-banner':['AD-BANNER','Wide editorial banner','left 38%','Model and hair are prominent; reserve space for later website copy.'],
+ 'style-finder':['AD-COPYSPACE','Style discovery card','upper left','Show the model on the right and keep style-list space clear.'],
+ 'transformation':['AD-COMPARE','Matched before/after pair','none','Same consenting adult in both frames; match angle, lighting and clothing; label accurately outside the image.'],
+ 'product-alternate':['SHOP-ANGLE','Additional product angle','none','Show a truthful alternate view of the same wig.'],
+ 'product-thumbnail':['SHOP-ANGLE','Small product gallery view','none','Use an approved product-gallery image and a tight crop; do not invent a different product.'],
+ 'occasion':['MODEL-EDITORIAL','Occasion campaign portrait','left side','Fashion editorial for the chosen occasion with a clear text-safe area.'],
+ 'journal':['SOCIAL-EDITORIAL','Editorial story image','none','Support the article topic without adding text or invented claims.'],
+ 'social':['SOCIAL-EDITORIAL','Social portrait','none','Natural lifestyle image with the wig visible and a mobile-safe crop.'],
+ 'share':['BRAND-HEADER','Wide share image','left 40%','Keep the focal point clear at small preview sizes.']
+};
+function shortcodeRecipe(){
+ const p=preset();
+ if(p.id==='product-main')return images.model?['MODEL-CATALOG','Wig shown clearly on a model','none','Show the actual wig clearly on the supplied model.']:['SHOP-CLEAN','Clean product listing','none','Isolate the full actual wig on a clean background.'];
+ return artRecipes[p.id];
+}
+function getShortcode(){
+ const p=preset();const [code,,space,recipeNote]=shortcodeRecipe();
+ const value=id=>$(id).value.trim();
+ const quoted=(key,val)=>`${key}="${String(val).replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\s+/g,' ').trim()}"`;
+ const gcd=(a,b)=>b?gcd(b,a%b):a;const divisor=gcd(p.w,p.h);
+ const productName=value('productTitle')||'[enter product name]';
+ const parts=[`/ART ${code}`,quoted('subject',productName),quoted('product',productName),quoted('ref','attached'),quoted('ratio',`${p.w/divisor}:${p.h/divisor}`),quoted('mode','image')];
+ if(images.model)parts.push(quoted('model_ref','attached'));
+ if(space!=='none')parts.push(quoted('space',space));
+ parts.push(quoted('palette','warm ivory, soft blush, restrained lilac'));
+ parts.push(quoted('light','soft diffused studio light; natural product sheen only'));
+ parts.push(quoted('setting',value('background')));
+ if(value('sku'))parts.push(quoted('sku',value('sku')));
+ if(value('truth'))parts.push(quoted('preserve',value('truth')));
+ if(value('dress'))parts.push(quoted('dress',$('dress').selectedOptions[0].textContent));
+ if(value('dressColor'))parts.push(quoted('dress_color',value('dressColor')));
+ if(value('dressDetails'))parts.push(quoted('dress_details',value('dressDetails')));
+ if(value('hairStyle'))parts.push(quoted('hair_style',$('hairStyle').selectedOptions[0].textContent));
+ if(value('hairParting'))parts.push(quoted('parting',value('hairParting')));
+ if(value('hairDetails'))parts.push(quoted('hair_details',value('hairDetails')));
+ parts.push(quoted('brief',recipeNote));
+ parts.push(quoted('avoid','extra shine, wet look, plastic hair, changed product details, text, logos, fake claims'));
+ return parts.join(' ');
+}
 function bgStyle(bg){return bg==='clean white'?'#ffffff':bg==='warm ivory studio'?'#fff9f8':bg==='soft lilac editorial'?'linear-gradient(115deg,#f1e7fa,#e7d8f5)':bg==='transparent'?'repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 50%/20px 20px':'linear-gradient(115deg,#fff9f8 5%,#f8f2f9 65%,#f2e9fa)'}
-function update(){const p=preset();$('scaleValue').value=$('scale').value+'%';$('presetHelp').textContent=`${p.w} × ${p.h} px · ${p.safe}`;$('placementWhere').textContent=`Where in your reference: ${placementExplanations[p.id][0]}`;$('placementPrepare').textContent=`What to prepare: ${placementExplanations[p.id][1]}`;const pv=$('preview');pv.style.aspectRatio=`${p.w}/${p.h}`;pv.style.background=bgStyle($('background').value);const anchor=$('anchor').value;const img=images.model?$('modelPreview'):$('productPreview');for(const id of ['productPreview','modelPreview'])$(id).style.display='none';if(images.product||images.model){img.style.display='block';img.style.height=$('scale').value+'%';img.style.left=anchor==='left'?'2%':anchor==='center'?'50%':'auto';img.style.right=anchor==='right'?'2%':'auto';img.style.transform=anchor==='center'?'translateX(-50%)':'none';$('emptyPreview').style.display='none'}else $('emptyPreview').style.display='grid';$('preview').querySelector('.safezone').style.display=p.safe.toLowerCase().includes('left')?'block':'none';$('preview').querySelector('.preview-label').style.display=p.safe.toLowerCase().includes('left')?'block':'none';const brief=getBrief();$('jsonOut').textContent=JSON.stringify(brief,null,2);$('validation').textContent=!images.product?'Product photo required for an image export. JSON can still be downloaded as a planning brief.':!$('truth').value.trim()?'Add the product attributes before using an AI platform; review the downloaded image against the real product.':'Ready for export. Review product fidelity and crop before uploading to your store.';localStorage.setItem(stateKey,JSON.stringify(Object.fromEntries(fields.map(id=>[id,$(id).value]))));}
+function update(){const p=preset();$('scaleValue').value=$('scale').value+'%';$('presetHelp').textContent=`${p.w} × ${p.h} px · ${p.safe}`;$('placementWhere').textContent=`Where in your reference: ${placementExplanations[p.id][0]}`;$('placementPrepare').textContent=`What to prepare: ${placementExplanations[p.id][1]}`;const pv=$('preview');pv.style.aspectRatio=`${p.w}/${p.h}`;pv.style.background=bgStyle($('background').value);const anchor=$('anchor').value;const img=images.model?$('modelPreview'):$('productPreview');for(const id of ['productPreview','modelPreview'])$(id).style.display='none';if(images.product||images.model){img.style.display='block';img.style.height=$('scale').value+'%';img.style.left=anchor==='left'?'2%':anchor==='center'?'50%':'auto';img.style.right=anchor==='right'?'2%':'auto';img.style.transform=anchor==='center'?'translateX(-50%)':'none';$('emptyPreview').style.display='none'}else $('emptyPreview').style.display='grid';$('preview').querySelector('.safezone').style.display=p.safe.toLowerCase().includes('left')?'block':'none';$('preview').querySelector('.preview-label').style.display=p.safe.toLowerCase().includes('left')?'block':'none';const brief=getBrief();$('jsonOut').textContent=JSON.stringify(brief,null,2);$('shortcodeOut').textContent=getShortcode();$('shortcodeRecipe').textContent=`${shortcodeRecipe()[0]} · ${shortcodeRecipe()[1]}`;$('validation').textContent=!images.product?'Product photo required for an image export. JSON can still be downloaded as a planning brief.':!$('truth').value.trim()?'Add the product attributes before using an AI platform; review the downloaded image against the real product.':'Ready for export. Review product fidelity and crop before uploading to your store.';localStorage.setItem(stateKey,JSON.stringify(Object.fromEntries(fields.map(id=>[id,$(id).value]))));}
 function loadFile(kind,file){if(!file)return;if(!['image/jpeg','image/png','image/webp'].includes(file.type)){alert('Please choose a JPG, PNG or WebP image.');return}if(file.size>25*1024*1024){alert('Please choose an image smaller than 25 MB.');return}const reader=new FileReader();reader.onload=()=>{const image=new Image();image.onload=()=>{images[kind]={name:file.name,image,data:reader.result};$(kind+'Preview').src=reader.result;$(kind+'Name').textContent=file.name;update()};image.src=reader.result};reader.readAsDataURL(file)}
 function download(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
 function slug(s){return s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||'asset'}
@@ -73,6 +116,7 @@ presetSelect.addEventListener('change',()=>{const p=preset();$('anchor').value=p
 $('productFile').addEventListener('change',e=>loadFile('product',e.target.files[0]));$('modelFile').addEventListener('change',e=>loadFile('model',e.target.files[0]));
 $('downloadJson').onclick=()=>download(new Blob([JSON.stringify(getBrief(),null,2)],{type:'application/json'}),`femegha-${preset().id}-${slug($('productTitle').value)}.json`);
 $('copyJson').onclick=async()=>{try{await navigator.clipboard.writeText(JSON.stringify(getBrief(),null,2));$('copyJson').textContent='Copied JSON';setTimeout(()=>$('copyJson').textContent='Copy AI JSON',1800)}catch{alert('Copy failed. Please use Download AI JSON instead.')}};
+$('copyShortcode').onclick=async()=>{try{await navigator.clipboard.writeText(getShortcode());$('copyShortcode').textContent='Copied shortcode';setTimeout(()=>$('copyShortcode').textContent='Copy ART shortcode',1800)}catch{alert('Copy failed. Select and copy the shortcode shown above instead.')}};
 $('downloadImage').onclick=exportImage;$('generate').onclick=generate;
 $('reset').onclick=()=>{if(!confirm('Clear this brief and start fresh?'))return;localStorage.removeItem(stateKey);location.reload()};
 update();

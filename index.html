@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons/fs-icon-32.png">
   <title>Femegha Content Studio</title>
   <meta name="description" content="Create Femegha-ready fashion imagery and portable AI image briefs.">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
   <header class="topbar"><div class="brand">FEMEGHA <span>STUDIO</span></div><div class="topright"><span class="status">Local workspace · no account needed</span><button id="install" class="textbutton">Install app</button><button id="reset" class="textbutton">New brief</button></div></header>
@@ -41,12 +41,13 @@
         <div class="preview-wrap"><div id="preview" class="preview"><div class="safezone"><span>TEXT SAFE AREA</span></div><img id="productPreview" alt="Uploaded product preview"><img id="modelPreview" alt="Uploaded model preview"><div class="preview-label">FEMEGHA <em>More Than Hair.</em></div><div id="emptyPreview" class="empty">Your composition preview appears here</div></div></div>
         <p id="validation" class="validation">Add a product image to begin.</p>
         <div class="actions"><button id="downloadImage" class="secondary">Download composed image</button><button id="downloadJson" class="primary">Download AI JSON</button><button id="copyJson" class="secondary">Copy AI JSON</button><button id="generate" class="secondary">Generate via endpoint</button></div>
+        <div class="shortcode-card" aria-labelledby="shortcodeHeading"><div class="shortcode-heading"><h3 id="shortcodeHeading">ART shortcode</h3><span id="shortcodeRecipe"></span></div><pre id="shortcodeOut"></pre><button id="copyShortcode" class="secondary" type="button">Copy ART shortcode</button><p>This is a custom ART alias. In a new AI chat, attach the ART guide and your source photos before pasting it. Use the AI JSON for the complete brief.</p></div>
         <details open><summary>View your AI JSON instructions</summary><pre id="jsonOut"></pre></details>
       </section>
     </div>
     <section class="how"><div><p class="eyebrow">How to use your result</p><h2>From studio to storefront</h2></div><div class="how-grid"><article><b>01</b><h3>Use the image directly</h3><p>Download the composed image for your website after checking its crop and product accuracy.</p></article><article><b>02</b><h3>Use an AI platform</h3><p>Download the JSON and upload it with your source photos to ChatGPT, Gemini, or another platform.</p></article><article><b>03</b><h3>Bring back the result</h3><p>Review the generated image against your real product before uploading it to Femegha.</p></article></div></section>
   </main>
   <footer>FEMEGHA CONTENT STUDIO <span>Imagery guided by the approved Femegha design system.</span></footer>
-  <script type="module" src="app.js?v=9"></script>
+  <script type="module" src="app.js?v=10"></script>
 </body>
 </html>
