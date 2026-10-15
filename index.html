@@ -25,7 +25,7 @@
         <p class="note">AI results need a manual product accuracy check before publishing.</p>
       </section>
       <section class="panel direction" aria-labelledby="direction-heading"><div class="panel-head"><span>02</span><h2 id="direction-heading">Art direction</h2></div>
-        <div class="field"><label for="preset">Website placement</label><select id="preset"></select><small id="presetHelp"></small></div>
+        <div class="field"><label for="preset">Website placement</label><div class="placement-control"><select id="preset"></select><button id="placementInfo" type="button" class="info-button" aria-label="Explain selected website placement" title="What is this image for?">ⓘ</button></div><small id="presetHelp"></small><button id="allPlacements" type="button" class="guide-link">Explore all image types</button></div>
         <div class="two"><div class="field"><label for="anchor">Model position</label><select id="anchor"><option value="right">Right</option><option value="center">Center</option><option value="left">Left</option></select></div><div class="field"><label for="scale">Model size <output id="scaleValue">85%</output></label><input id="scale" type="range" min="40" max="125" value="85"></div></div>
         <div class="field"><label for="background">Background</label><select id="background"><option value="blush-to-ivory gradient">Blush to ivory gradient</option><option value="warm ivory studio">Warm ivory studio</option><option value="soft lilac editorial">Soft lilac editorial</option><option value="clean white">Clean white</option><option value="transparent">Transparent</option></select></div>
         <div class="field"><label for="mood">Creative direction</label><textarea id="mood" rows="3">Premium Indian beauty editorial, natural expression, soft diffused light, believable hair texture, refined styling.</textarea></div>
@@ -42,6 +42,7 @@
     <section class="how"><div><p class="eyebrow">How to use your result</p><h2>From studio to storefront</h2></div><div class="how-grid"><article><b>01</b><h3>Use the image directly</h3><p>Download the composed image for your website after checking its crop and product accuracy.</p></article><article><b>02</b><h3>Use an AI platform</h3><p>Download the JSON and upload it with your source photos to ChatGPT, Gemini, or another platform.</p></article><article><b>03</b><h3>Bring back the result</h3><p>Review the generated image against your real product before uploading it to Femegha.</p></article></div></section>
   </main>
   <footer>FEMEGHA CONTENT STUDIO <span>Imagery guided by the approved Femegha design system.</span></footer>
+  <dialog id="placementDialog" aria-labelledby="placementDialogTitle"><div class="dialog-head"><div><p class="eyebrow">Plain-language guide</p><h2 id="placementDialogTitle">Where will this image go?</h2></div><button id="closePlacementDialog" type="button" class="info-button" aria-label="Close guide">×</button></div><p class="dialog-intro">Choose an image type below. Tap ⓘ to see where it appears in your reference and which photos to prepare.</p><div id="placementGuideList" class="placement-guide-list"></div></dialog>
   <script type="module" src="app.js"></script>
 </body>
 </html>

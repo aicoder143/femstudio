@@ -13,12 +13,48 @@ const presets = [
   {id:'social',name:'Social portrait',w:1080,h:1350,anchor:'center',scale:95,bg:'soft lilac editorial',safe:'Keep subject inside a mobile-safe crop.'},
   {id:'share',name:'Website share image',w:1200,h:630,anchor:'right',scale:95,bg:'blush-to-ivory gradient',safe:'Left 40% for optional HTML/share text.'}
 ];
+const placementExplanations={
+  'hero-desktop':['Top left: the very large “More Than Hair” image.','Prepare a high-quality model portrait with the real wig. A transparent model cutout gives the hair its signature pop-out effect.'],
+  'hero-mobile':['Inside the phone shown near the top center.','Prepare a separate tall crop of the same campaign, leaving room for the headline on a narrow screen.'],
+  'hairstyle':['The six portraits under “Shop by Hairstyle”.','Prepare one consistent portrait for each hairstyle category: Straight, Wavy, Curly, Layered, Bob & Short, and Highlights.'],
+  'premium-banner':['The wide lavender “Premium Wigs for Every You” section on the left.','Prepare a striking model photo with space on the left for the story and button.'],
+  'style-finder':['The “Find Your Perfect Style” card at the upper right.','Prepare a model portrait positioned to the right, leaving space for the list of styles.'],
+  'transformation':['The two side-by-side portraits under “Real People, Real Transformations”.','Prepare genuine before and after photos of the same consenting person, with matching pose and lighting.'],
+  'product-main':['The large portrait on the “Classic Straight Wig” product page at center right.','Prepare the clearest, most accurate photo of the actual product; buyers use this to judge the wig.'],
+  'product-alternate':['Additional photos of the same wig in the product gallery.','Prepare another angle, such as front, side, back, hairline, or texture detail.'],
+  'product-thumbnail':['The small vertical photos beside the large product photo.','This is a small version of an approved product gallery image, not a separate photoshoot.'],
+  'occasion':['The lavender “Occasions Made More Beautiful” section at bottom right.','Prepare an editorial model image for an occasion such as office wear, a party, or a wedding.'],
+  'journal':['The four article photos under “The Femegha Edit” at bottom left.','Prepare a photo that illustrates a hair-care guide, styling tip, or real customer story.'],
+  'social':['Not a separate section in the reference image.','Prepare a tall version of an approved image for social media posts.'],
+  'share':['Not a separate section in the reference image.','Prepare a wide image that appears when someone shares a Femegha page link.']
+};
 const $=id=>document.getElementById(id);
 const fields=['productTitle','sku','truth','preset','anchor','scale','background','mood','notes','endpoint'];
 const images={product:null,model:null};
 const stateKey='femegha-studio-v1';
 const presetSelect=$('preset');
 for(const p of presets){const o=document.createElement('option');o.value=p.id;o.textContent=`${p.name} · ${p.w}×${p.h}`;presetSelect.append(o)}
+function openPlacementGuide(selectedOnly=false){
+ const list=$('placementGuideList');list.replaceChildren();
+ for(const p of (selectedOnly?[preset()]:presets)){
+  const row=document.createElement('div');row.className='placement-row';
+  const top=document.createElement('div');top.className='placement-row-top';
+  const name=document.createElement('strong');name.textContent=p.name;
+  const info=document.createElement('button');info.type='button';info.className='info-button';info.textContent='ⓘ';info.setAttribute('aria-label',`Explain ${p.name}`);info.setAttribute('aria-expanded','false');
+  const choose=document.createElement('button');choose.type='button';choose.className='choose-button';choose.textContent=p.id===preset().id?'Selected':'Choose';choose.disabled=p.id===preset().id;
+  const explanation=document.createElement('div');explanation.className='placement-explanation';explanation.hidden=true;
+  const where=document.createElement('p');const prep=document.createElement('p');where.textContent=`Where: ${placementExplanations[p.id][0]}`;prep.textContent=`What to prepare: ${placementExplanations[p.id][1]}`;explanation.append(where,prep);
+  info.onclick=()=>{explanation.hidden=!explanation.hidden;info.setAttribute('aria-expanded',String(!explanation.hidden))};
+  choose.onclick=()=>{presetSelect.value=p.id;presetSelect.dispatchEvent(new Event('change'));$('placementDialog').close()};
+  top.append(name,info,choose);row.append(top,explanation);list.append(row);
+  if(selectedOnly){explanation.hidden=false;info.setAttribute('aria-expanded','true')}
+ }
+ $('placementDialog').showModal();
+}
+$('placementInfo').onclick=()=>openPlacementGuide(true);
+$('allPlacements').onclick=()=>openPlacementGuide(false);
+$('closePlacementDialog').onclick=()=>$('placementDialog').close();
+$('placementDialog').onclick=e=>{if(e.target===$('placementDialog'))$('placementDialog').close()};
 try{const saved=JSON.parse(localStorage.getItem(stateKey)||'{}');for(const id of fields)if(saved[id]!=null)$(id).value=saved[id]}catch{}
 function preset(){return presets.find(p=>p.id===presetSelect.value)||presets[0]}
 function getBrief(){const p=preset();const title=$('productTitle').value.trim()||'Unnamed Femegha product';const truth=$('truth').value.trim();const anchor=$('anchor').value;const scale=Number($('scale').value);const background=$('background').value;const prompt=`Create a premium Femegha ${p.name.toLowerCase()} image at ${p.w}×${p.h} pixels (${p.w/p.h}:1 aspect ratio). Use the attached product photo as the product truth reference${images.model?', and the attached model photo as the model identity reference':''}. Product: ${title}${$('sku').value.trim()?` (SKU ${$('sku').value.trim()})`:''}. Preserve exactly these known product attributes: ${truth||'[USER MUST ADD product color, texture, length, hairline and other visible details]'}. Position the ${images.model?'model':'product'} on the ${anchor}, approximately ${scale}% of image height. Background: ${background}. ${$('mood').value.trim()} Placement constraints: ${p.safe} ${p.layered?'Deliver a clean backdrop, transparent model cutout with natural hair edges, and a composite preview. The silhouette should rise across the hero/header seam without covering navigation controls.':''} ${$('notes').value.trim()} Keep anatomy, face and hair realistic. Do not invent product properties or add text, logos, prices, buttons, badges, fake reviews, or watermarks.`;
