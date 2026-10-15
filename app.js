@@ -75,12 +75,16 @@ const artRecipes={
 };
 function shortcodeRecipe(){
  const p=preset();
- if(p.id==='product-main')return images.model?['MODEL-CATALOG','Wig shown clearly on a model','none','Show the actual wig clearly on the supplied model.']:['SHOP-CLEAN','Clean product listing','none','Isolate the full actual wig on a clean background.'];
+ if(p.id==='product-main'){
+  const modelRequested=images.model||($('dress').value&&$('dress').value!=='custom')||$('dressDetails').value.trim()||($('dressColor').value&&$('dressColor').value!=='custom')||($('hairStyle').value&&$('hairStyle').value!=='custom')||$('hairParting').value||$('hairDetails').value.trim();
+  return modelRequested?['MODEL-CATALOG','Wig shown clearly on a model','none','Show the actual wig clearly on an adult model; preserve the supplied model identity if a model photo is attached.']:['SHOP-CLEAN','Clean product listing','none','Isolate the full actual wig on a clean background.'];
+ }
  return artRecipes[p.id];
 }
 function getShortcode(){
  const p=preset();const [code,,space,recipeNote]=shortcodeRecipe();
  const value=id=>$(id).value.trim();
+ const modelStylingRelevant=!['SHOP-CLEAN','SHOP-ANGLE','SHOP-DETAIL'].includes(code);
  const quoted=(key,val)=>`${key}="${String(val).replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\s+/g,' ').trim()}"`;
  const gcd=(a,b)=>b?gcd(b,a%b):a;const divisor=gcd(p.w,p.h);
  const productName=value('productTitle')||'[enter product name]';
@@ -92,12 +96,14 @@ function getShortcode(){
  parts.push(quoted('setting',value('background')));
  if(value('sku'))parts.push(quoted('sku',value('sku')));
  if(value('truth'))parts.push(quoted('preserve',value('truth')));
- if(value('dress'))parts.push(quoted('dress',$('dress').selectedOptions[0].textContent));
- if(value('dressColor'))parts.push(quoted('dress_color',value('dressColor')));
- if(value('dressDetails'))parts.push(quoted('dress_details',value('dressDetails')));
- if(value('hairStyle'))parts.push(quoted('hair_style',$('hairStyle').selectedOptions[0].textContent));
- if(value('hairParting'))parts.push(quoted('parting',value('hairParting')));
- if(value('hairDetails'))parts.push(quoted('hair_details',value('hairDetails')));
+ if(modelStylingRelevant){
+  if(value('dress')&&!(value('dress')==='custom'&&!value('dressDetails')))parts.push(quoted('dress',value('dress')==='custom'?value('dressDetails'):$('dress').selectedOptions[0].textContent));
+  if(value('dressColor')&&!(value('dressColor')==='custom'&&!value('dressDetails')))parts.push(quoted('dress_color',value('dressColor')==='custom'?value('dressDetails'):value('dressColor')));
+  if(value('dressDetails')&&value('dress')!=='custom')parts.push(quoted('dress_details',value('dressDetails')));
+  if(value('hairStyle')&&!(value('hairStyle')==='custom'&&!value('hairDetails')))parts.push(quoted('hair_style',value('hairStyle')==='custom'?value('hairDetails'):$('hairStyle').selectedOptions[0].textContent));
+  if(value('hairParting'))parts.push(quoted('parting',value('hairParting')));
+  if(value('hairDetails')&&value('hairStyle')!=='custom')parts.push(quoted('hair_details',value('hairDetails')));
+ }
  parts.push(quoted('brief',recipeNote));
  parts.push(quoted('avoid','extra shine, wet look, plastic hair, changed product details, text, logos, fake claims'));
  return parts.join(' ');
