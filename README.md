@@ -16,6 +16,8 @@ The JSON brief uses schema version 2.0 and separates output size, placement, sou
 
 Dress and hair styling are optional. If you leave both sets of controls at “No preference” and leave their detail fields empty, the JSON omits `wardrobe` and `hairStyling` entirely.
 
+The JSON contains a fixed premium-finish rule: preserve the actual product's sheen and texture. It excludes added gloss, wet-look shine, plastic-looking hair, blown highlights, and heavy beauty filtering. Product fidelity takes priority over creative notes.
+
 ## Optional generation endpoint
 
 Enter the URL of your **own HTTPS proxy** in the app. It receives a JSON request containing the brief plus `referenceImageDataUrls.product` and optional `referenceImageDataUrls.model`. It must return JSON like `{"imageDataUrl":"data:image/png;base64,..."}`. Keep provider credentials on the server; never embed an API key in this static app or its repository. The endpoint URL is stored in this browser's localStorage.
