@@ -1,5 +1,5 @@
-const CACHE='femegha-studio-v4';
-const APP=['./','./index.html','./style.css?v=3','./app.js?v=3','./manifest.webmanifest','./icons/fs-icon-192.png','./icons/fs-icon-512.png','./icons/fs-icon-32.png'];
+const CACHE='femegha-studio-v5';
+const APP=['./','./index.html','./style.css?v=3','./app.js?v=5','./manifest.webmanifest','./icons/fs-icon-192.png','./icons/fs-icon-512.png','./icons/fs-icon-32.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(APP)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',event=>{

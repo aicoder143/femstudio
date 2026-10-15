@@ -6,11 +6,13 @@ A static HTML/CSS/JavaScript Progressive Web App for producing Femegha image bri
 
 1. Upload the real product photo. A model image is optional. A transparent PNG/WebP model cutout works best for a layered hero.
 2. Enter the real product characteristics that must stay accurate.
-3. Select a placement and tune composition.
-4. Download a PNG composed from your uploaded photo, or download JSON and use it with the source photos in an AI image platform.
+3. Select a placement, model outfit, hair styling, and composition.
+4. Download a PNG composed from your uploaded photo, or download the structured JSON and use it with the source photos in an AI image platform.
 5. Check the result against the actual product before uploading it to the storefront.
 
-The browser composition does not remove backgrounds or synthesize new scenes. If a model photo is supplied, the composite uses it as the visual layer. The product photo remains the truth reference for the JSON prompt. Genuine AI image generation requires an external provider.
+The browser composition does not remove backgrounds, change clothing, restyle hair, or synthesize new scenes. If a model photo is supplied, the composite uses it as the visual layer. The product photo remains the truth reference for the JSON brief. Dress and hair styling choices are instructions for an AI image platform or configured generation endpoint. Genuine AI image generation requires an external provider.
+
+The JSON brief uses schema version 2.0 and separates output size, placement, source image roles, immutable product details, model position, wardrobe, hair styling, art direction, generation rules, and review checks. Attach the source photos alongside the JSON when using ChatGPT, Gemini, or another tool.
 
 ## Optional generation endpoint
 
